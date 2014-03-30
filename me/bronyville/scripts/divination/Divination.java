@@ -57,7 +57,7 @@ public class Divination extends Script implements PaintListener {
         props.put("Divination", ctx.skills.getLevel(Skills.DIVINATION) + "(+" + skillData.level(Skills.DIVINATION) + ")");
         props.put("Experience", skillData.experience(SkillData.Rate.HOUR, Skills.DIVINATION) + "(+" + skillData.experience(Skills.DIVINATION) + ")");
         props.put("Time to level", formatTime(skillData.timeToLevel(SkillData.Rate.HOUR, Skills.DIVINATION)));
-        props.put("Harvesting at", location);
+        props.put("Harvesting at", location == null ? "Unknown" : location.name());
         paint.properties(props).draw(graphics);
     }
 

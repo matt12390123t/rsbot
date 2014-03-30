@@ -31,6 +31,7 @@ public class HarvestWisp extends Job {
     public boolean activate() {
         return script.ctx.backpack.select().count() != 28
                 && script.ctx.players.local().getAnimation() != 21228
+                && script.ctx.players.local().getAnimation() != 21231
                 && safeToHarvest();
     }
 
@@ -60,7 +61,6 @@ public class HarvestWisp extends Job {
             }
         }
 
-        System.out.println(currentSpot.getLocation().distanceTo(script.ctx.players.local()));
         if(currentSpot != script.ctx.npcs.getNil()) {
             if(currentSpot.getLocation().distanceTo(script.ctx.players.local()) >= 7) {
                 script.setStatus("Walking towards spot");
@@ -84,9 +84,9 @@ public class HarvestWisp extends Job {
                         Condition.wait(new Callable<Boolean>() {
                             @Override
                             public Boolean call() throws Exception {
-                                return script.ctx.players.local().getAnimation() != -1;
+                                return script.ctx.players.local().getAnimation() == 21228 || script.ctx.players.local().getAnimation() == 21231;
                             }
-                        }, 300, 5);
+                        }, 300, 10);
                     }
                 }
             }
