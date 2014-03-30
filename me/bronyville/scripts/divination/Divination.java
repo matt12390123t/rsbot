@@ -30,8 +30,12 @@ public class Divination extends Script implements PaintListener {
     private DropJunk dropJunk;
     private HarvestWisp harvestWisp;
 
+    private Location location;
+
     @Override
     public void onStart() {
+        location = Location.determine(ctx);
+
         captureChronicle = new CaptureChronicle(this);
         convertMemory = new ConvertMemory(this);
         dropJunk = new DropJunk(this);
@@ -53,6 +57,7 @@ public class Divination extends Script implements PaintListener {
         props.put("Divination", ctx.skills.getLevel(Skills.DIVINATION) + "(+" + skillData.level(Skills.DIVINATION) + ")");
         props.put("Experience", skillData.experience(SkillData.Rate.HOUR, Skills.DIVINATION) + "(+" + skillData.experience(Skills.DIVINATION) + ")");
         props.put("Time to level", formatTime(skillData.timeToLevel(SkillData.Rate.HOUR, Skills.DIVINATION)));
+        props.put("Harvesting at", location);
         paint.properties(props).draw(graphics);
     }
 

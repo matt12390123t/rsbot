@@ -2,6 +2,7 @@ package me.bronyville.scripts.divination.jobs;
 
 import me.bronyville.api.impl.Script;
 import me.bronyville.api.impl.jobs.Job;
+import me.bronyville.scripts.divination.Location;
 import org.powerbot.script.lang.Filter;
 import org.powerbot.script.util.Condition;
 import org.powerbot.script.wrappers.LocalPath;
@@ -44,6 +45,22 @@ public class HarvestWisp extends Job {
     @Override
     public void execute() {
         final Npc currentSpot = getHarvestableSpot();
+
+        if(Location.determine(script.ctx) == Location.SEERS
+                && (script.ctx.npcs.select().select(spotFilter).isEmpty() || getHarvestableSpot().getLocation().distanceTo(script.ctx.players.local()) >= 7)) {
+            script.setStatus("Seers is dumb, walking to wisps");
+            if(script.ctx.movement.stepTowards(Location.SEERS.getCommonLocation())) {
+                Condition.wait(new Callable<Boolean>() {
+                    @Override
+                    public Boolean call() throws Exception {
+                        return !script.ctx.players.local().isInMotion()
+                                && Location.SEERS.getCommonLocation().distanceTo(script.ctx.players.local()) < 3;
+                    }
+                }, 300, 5);
+            }
+        }
+
+        System.out.println(currentSpot.getLocation().distanceTo(script.ctx.players.local()));
         if(currentSpot != script.ctx.npcs.getNil()) {
             if(currentSpot.getLocation().distanceTo(script.ctx.players.local()) >= 7) {
                 script.setStatus("Walking towards spot");
