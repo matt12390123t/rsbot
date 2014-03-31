@@ -4,16 +4,14 @@ import me.bronyville.api.graphics.DynamicPaint;
 import me.bronyville.api.graphics.LinkedProperties;
 import me.bronyville.api.impl.Script;
 import me.bronyville.api.impl.jobs.Job;
-import me.bronyville.scripts.divination.jobs.CaptureChronicle;
-import me.bronyville.scripts.divination.jobs.ConvertMemory;
-import me.bronyville.scripts.divination.jobs.DropJunk;
-import me.bronyville.scripts.divination.jobs.HarvestWisp;
+import me.bronyville.scripts.divination.jobs.*;
 import org.powerbot.event.PaintListener;
 import org.powerbot.script.Manifest;
 import org.powerbot.script.methods.Skills;
 import org.powerbot.script.util.SkillData;
 
 import java.awt.*;
+import java.text.DecimalFormat;
 
 @Manifest(
         name = "Ultra Divination",
@@ -29,6 +27,7 @@ public class Divination extends Script implements PaintListener {
     private ConvertMemory convertMemory;
     private DropJunk dropJunk;
     private HarvestWisp harvestWisp;
+    private DestroyChronicle destroyChronicle;
 
     private Location location;
 
@@ -40,8 +39,9 @@ public class Divination extends Script implements PaintListener {
         convertMemory = new ConvertMemory(this);
         dropJunk = new DropJunk(this);
         harvestWisp = new HarvestWisp(this);
+        destroyChronicle = new DestroyChronicle(this);
 
-        getContainer().submit(captureChronicle, convertMemory, dropJunk, harvestWisp);
+        getContainer().submit(captureChronicle, destroyChronicle, convertMemory, dropJunk, harvestWisp);
         log.info(getName() + " is starting!");
     }
 
@@ -50,12 +50,22 @@ public class Divination extends Script implements PaintListener {
         return (h < 10 ? "0" + h : h) + ":" + (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s);
     }
 
+    public String formatNumber(final int number) {
+        final DecimalFormat decimalFormat = new DecimalFormat("##.##");
+        if(number >= 1000000) {
+            return decimalFormat.format((double)number / 1000000) + "m";
+        } else if(number >= 1000) {
+            return decimalFormat.format((double)number / 1000) + "k";
+        }
+        return decimalFormat.format(number);
+    }
+
     @Override
     public void repaint(Graphics graphics) {
         props.put("Runtime", formatTime(getRuntime()));
         props.put("Status", getStatus());
         props.put("Divination", ctx.skills.getLevel(Skills.DIVINATION) + "(+" + skillData.level(Skills.DIVINATION) + ")");
-        props.put("Experience", skillData.experience(SkillData.Rate.HOUR, Skills.DIVINATION) + "(+" + skillData.experience(Skills.DIVINATION) + ")");
+        props.put("Experience", formatNumber(skillData.experience(SkillData.Rate.HOUR, Skills.DIVINATION)) + "(+" + formatNumber(skillData.experience(Skills.DIVINATION)) + ")");
         props.put("Time to level", formatTime(skillData.timeToLevel(SkillData.Rate.HOUR, Skills.DIVINATION)));
         props.put("Harvesting at", location == null ? "Unknown" : location.name());
         paint.properties(props).draw(graphics);

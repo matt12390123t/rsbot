@@ -12,7 +12,7 @@ public enum Location {
     FALADOR(-1, null, -1),
     VARROCK(-1, null, -1),
     SEERS(87306, new Tile(2746, 3427, 0), 18155, 18178),
-    RELLEKA(87306, null, 18180, 18157),
+    RELLEKA(87306, null, 18158, 18180, 18157),
     KARAMJA(87306, null, 18182, 18159);
 
 
